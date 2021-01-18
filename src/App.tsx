@@ -1,22 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
+import {
+  BrowserRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
+
+import SignInPage from './pages/SignIn';
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="container mx-auto bg-red-100">
-      <header>
-        <p>Hello Vite + React!</p>
-        <p>
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.tsx</code> and save to test HMR updates.
-        </p>
-      </header>
-    </div>
+    <Router>
+      <Switch>
+        {/* TODO: protected route for the main app */}
+        <Route exact path="/">
+          <Redirect to="/signin" />
+        </Route>
+        <Route path="/signin">
+          <SignInPage />
+        </Route>
+        {/* <Route path="/signup"></Route>
+        <Route path="/recovery"></Route>
+        <Route path="*"></Route> */}
+      </Switch>
+    </Router>
   );
 }
 
