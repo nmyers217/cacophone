@@ -10,7 +10,7 @@ const HeroLayout: React.FunctionComponent = ({ children }) => {
 
   return (
     <div className="flex flex-col h-screen">
-      <main className="hero mb-auto md:pt-4 pb-12">
+      <main className="hero mb-auto py-4 md:pt-4 md:pb-12">
         {/* Logo */}
         <div className="flex flex-none justify-center items-center">
           {godMode && (
@@ -30,7 +30,7 @@ const HeroLayout: React.FunctionComponent = ({ children }) => {
         </div>
 
         {/* Layout content */}
-        <div className="flex justify-center items-center">{children}</div>
+        <div className="flex justify-center items-center p-2">{children}</div>
       </main>
 
       {/* Footer */}
