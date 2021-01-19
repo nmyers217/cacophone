@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import { firestore } from '../api';
 import useFirestoreQuery from '../hooks/useFirestoreQuery';
@@ -13,7 +13,7 @@ export interface Server {
 
 interface ServerListProps {
   activeServer?: Server;
-  changeServer: React.Dispatch<SetStateAction<Server | undefined>>;
+  changeServer: (s: Server) => void;
 }
 
 const ServerList: React.FunctionComponent<ServerListProps> = ({
@@ -28,11 +28,14 @@ const ServerList: React.FunctionComponent<ServerListProps> = ({
     console.log('Servers:', status);
     if (data) {
       console.log(data);
+      if (data.length > 0) {
+        changeServer(data[0]);
+      }
     }
     if (error) {
       console.error(error);
     }
-  }, [data, status, error]);
+  }, [data, status, error, changeServer]);
 
   return (
     <div className="flex flex-col items-center flex-shrink-0 w-16 border-r border-gray-300 bg-gray-200 py-3">

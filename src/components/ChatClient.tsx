@@ -1,79 +1,28 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import ServerList, { Server } from './ServerList';
+import ChannelList from './ChannelList';
 
 const ChatClient: React.FunctionComponent = () => {
   const [server, setServer] = useState<Server | undefined>(undefined);
+  const [channel, setChannel] = useState<string>('General');
+  const changeServer = useCallback(
+    (server: Server) => {
+      setChannel('General');
+      setServer(server);
+    },
+    [setChannel, setServer],
+  );
 
   return (
     <div className="flex h-screen overflow-hidden text-gray-700">
-      <ServerList activeServer={server} changeServer={setServer} />
+      <ServerList activeServer={server} changeServer={changeServer} />
 
-      {/* Channel List */}
-      <div className="flex flex-col flex-shrink-0 w-64 border-r border-gray-300 bg-gray-100">
-        <div className="h-0 overflow-auto flex-grow">
-          <div className="mt-4">
-            <div className="flex items-center h-8 px-3 group">
-              <button
-                id="channels_toggle"
-                className="flex items-center flex-grow focus:outline-none"
-              >
-                <svg
-                  className="w-4 h-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="ml-2 leading-none font-medium text-sm">
-                  Channels
-                </span>
-              </button>
-              <button className="items-center justify-center h-6 w-6 ml-auto rounded hidden group-hover:flex hover:bg-gray-300">
-                <svg
-                  className="h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div id="channels_list">
-              <a
-                className="flex items-center h-8 bg-gray-300 text-sm pl-8 pr-3"
-                href="#"
-              >
-                <svg
-                  className="h-4 w-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9.243 3.03a1 1 0 01.727 1.213L9.53 6h2.94l.56-2.243a1 1 0 111.94.486L14.53 6H17a1 1 0 110 2h-2.97l-1 4H15a1 1 0 110 2h-2.47l-.56 2.242a1 1 0 11-1.94-.485L10.47 14H7.53l-.56 2.242a1 1 0 11-1.94-.485L5.47 14H3a1 1 0 110-2h2.97l1-4H5a1 1 0 110-2h2.47l.56-2.243a1 1 0 011.213-.727zM9.03 8l-1 4h2.938l1-4H9.031z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                <span className="ml-2 leading-none font-bold">General</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+      <ChannelList
+        activeServer={server}
+        activeChannel={channel}
+        changeChannel={setChannel}
+      />
 
       {/* Chat */}
       <div className="flex flex-col flex-grow">
