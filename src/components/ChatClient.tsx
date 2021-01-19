@@ -1,25 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import ServerList, { Server } from './ServerList';
 
 const ChatClient: React.FunctionComponent = () => {
+  const [server, setServer] = useState<Server | undefined>(undefined);
+
   return (
     <div className="flex h-screen overflow-hidden text-gray-700">
-      <div className="flex flex-col items-center flex-shrink-0 w-16 border-r border-gray-300 bg-gray-200 py-3">
-        <a
-          className="w-10 h-10 rounded-lg bg-gray-400 hover:bg-gray-500"
-          href="#"
-        ></a>
-        <a
-          className="relative w-10 h-10 rounded-lg bg-gray-400 mt-4 hover:bg-gray-500"
-          href="#"
-        >
-          <span className="absolute w-3 h-3 rounded-full bg-blue-400 top-0 right-0 -mt-1 -mr-1"></span>
-        </a>
-        <a
-          className="w-10 h-10 rounded-lg bg-gray-400 mt-4 hover:bg-gray-500"
-          href="#"
-        ></a>
-      </div>
+      <ServerList activeServer={server} changeServer={setServer} />
 
+      {/* Channel List */}
       <div className="flex flex-col flex-shrink-0 w-64 border-r border-gray-300 bg-gray-100">
         <div className="h-0 overflow-auto flex-grow">
           <div className="mt-4">
@@ -35,9 +25,9 @@ const ChatClient: React.FunctionComponent = () => {
                   fill="currentColor"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
                 <span className="ml-2 leading-none font-medium text-sm">
@@ -53,9 +43,9 @@ const ChatClient: React.FunctionComponent = () => {
                   stroke="currentColor"
                 >
                   <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
                     d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
                   />
                 </svg>
@@ -73,9 +63,9 @@ const ChatClient: React.FunctionComponent = () => {
                   fill="currentColor"
                 >
                   <path
-                    fill-rule="evenodd"
+                    fillRule="evenodd"
                     d="M9.243 3.03a1 1 0 01.727 1.213L9.53 6h2.94l.56-2.243a1 1 0 111.94.486L14.53 6H17a1 1 0 110 2h-2.97l-1 4H15a1 1 0 110 2h-2.47l-.56 2.242a1 1 0 11-1.94-.485L10.47 14H7.53l-.56 2.242a1 1 0 11-1.94-.485L5.47 14H3a1 1 0 110-2h2.97l1-4H5a1 1 0 110-2h2.47l.56-2.243a1 1 0 011.213-.727zM9.03 8l-1 4h2.938l1-4H9.031z"
-                    clip-rule="evenodd"
+                    clipRule="evenodd"
                   />
                 </svg>
                 <span className="ml-2 leading-none font-bold">General</span>
@@ -85,6 +75,7 @@ const ChatClient: React.FunctionComponent = () => {
         </div>
       </div>
 
+      {/* Chat */}
       <div className="flex flex-col flex-grow">
         <div className="flex items-center flex-shrink-0 h-16 bg-white border-b border-gray-300 px-4">
           <div>
