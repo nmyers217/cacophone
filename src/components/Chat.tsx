@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { firestore } from '../api';
 import useFirestoreQuery from '../hooks/useFirestoreQuery';
@@ -12,6 +12,7 @@ interface ChatProps {
 }
 
 // A hacky way to get today's date at midnight in the user's current timezone
+// FIXME: this probably doesn't work in safari or something annoying like that
 const todayAtMidnight = () => new Date(new Date().toLocaleDateString());
 
 const Chat: React.FunctionComponent<ChatProps> = ({
@@ -19,6 +20,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
   activeChannel,
 }) => {
   const [message, setMessage] = useState<string>('');
+  const bottomRef = useRef<HTMLDivElement>(null);
   const { user } = useAuth();
   const { data, status, error } = useFirestoreQuery(
     firestore
@@ -45,8 +47,6 @@ const Chat: React.FunctionComponent<ChatProps> = ({
       body,
       channel: activeChannel,
       createdAt: new Date().valueOf(),
-      likes: 0,
-      dislikes: 0,
       sender: user.displayName || user.uid,
     });
   };
@@ -55,15 +55,15 @@ const Chat: React.FunctionComponent<ChatProps> = ({
     console.log('Messages:', status);
     if (data) {
       console.log(data);
+      bottomRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
     }
     if (error) {
       console.error(error);
     }
   }, [data, status, error]);
-
-  // TODO: liking and disliking messages
-  // TODO: deleting your own messages
-  // TODO: security
 
   return (
     <div className="flex flex-col flex-grow">
@@ -84,6 +84,8 @@ const Chat: React.FunctionComponent<ChatProps> = ({
         {data?.map((message: any) => (
           <Message key={message.id} {...message} />
         ))}
+
+        <div ref={bottomRef}></div>
       </div>
 
       <div className="h-12 bg-white px-4 pb-4">
@@ -92,6 +94,7 @@ const Chat: React.FunctionComponent<ChatProps> = ({
             className="flex-grow text-sm px-3 border-l border-gray-300 ml-1 resize-none"
             value={message}
             type="text"
+            max={1000}
             placeholder={`Message ${activeChannel}`}
             onChange={(e) => setMessage(e.target.value)}
             onKeyUp={(e) => e.key === 'Enter' && onSubmit()}
