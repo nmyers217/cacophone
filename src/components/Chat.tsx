@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { firestore } from '../api';
 import useFirestoreQuery from '../hooks/useFirestoreQuery';
+import useAuth from '../hooks/useAuth';
 import { Server } from './ServerList';
 import Message from './Message';
 
 interface ChatProps {
   activeServer: Server | undefined;
   activeChannel: string;
-  sendMessage: (message: string) => void;
 }
 
 // A hacky way to get today's date at midnight in the user's current timezone
@@ -17,8 +17,9 @@ const todayAtMidnight = () => new Date(new Date().toLocaleDateString());
 const Chat: React.FunctionComponent<ChatProps> = ({
   activeServer,
   activeChannel,
-  sendMessage,
 }) => {
+  const [message, setMessage] = useState<string>('');
+  const { user } = useAuth();
   const { data, status, error } = useFirestoreQuery(
     firestore
       .doc(`servers/${activeServer?.id}`)
@@ -27,6 +28,28 @@ const Chat: React.FunctionComponent<ChatProps> = ({
       .where('channel', '==', activeChannel)
       .orderBy('createdAt'),
   );
+
+  const onSubmit = async () => {
+    if (!message || !user) {
+      return;
+    }
+
+    const body = message;
+    setMessage('');
+
+    const collection = firestore
+      .doc(`servers/${activeServer?.id}`)
+      .collection('messages');
+    const { id: messageId } = collection.doc();
+    await collection.doc(messageId).set({
+      body,
+      channel: activeChannel,
+      createdAt: new Date().valueOf(),
+      likes: 0,
+      dislikes: 0,
+      sender: user.displayName || user.uid,
+    });
+  };
 
   useEffect(() => {
     console.log('Messages:', status);
@@ -38,8 +61,9 @@ const Chat: React.FunctionComponent<ChatProps> = ({
     }
   }, [data, status, error]);
 
-  // TODO: sending messages
   // TODO: liking and disliking messages
+  // TODO: deleting your own messages
+  // TODO: security
 
   return (
     <div className="flex flex-col flex-grow">
@@ -64,12 +88,18 @@ const Chat: React.FunctionComponent<ChatProps> = ({
 
       <div className="h-12 bg-white px-4 pb-4">
         <div className="flex items-center border-2 border-gray-300 rounded-sm p-1">
-          <textarea
-            className="flex-grow text-sm px-3 border-l border-gray-300 ml-1"
-            placeholder="Message council-of-elrond"
-            rows={1}
-          ></textarea>
-          <button className="flex-shrink flex items-center justify-center h-6 w-6 rounded hover:bg-gray-200">
+          <input
+            className="flex-grow text-sm px-3 border-l border-gray-300 ml-1 resize-none"
+            value={message}
+            type="text"
+            placeholder={`Message ${activeChannel}`}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyUp={(e) => e.key === 'Enter' && onSubmit()}
+          />
+          <button
+            className="flex-shrink flex items-center justify-center h-6 w-6 rounded hover:bg-gray-200"
+            onClick={onSubmit}
+          >
             <svg
               className="h-4 w-4 transform rotate-90"
               xmlns="http://www.w3.org/2000/svg"

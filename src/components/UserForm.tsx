@@ -14,12 +14,14 @@ export enum FormMode {
 
 interface FormData {
   email: string;
+  username: string;
   password: string;
 }
 
 const formSchema = yup.object().shape({
-  email: yup.string().email().required().max(200),
-  password: yup.string().required().max(200),
+  email: yup.string().email().required().max(50),
+  username: yup.string().required().max(50),
+  password: yup.string().required().max(50),
 });
 
 interface UserFormProps {
@@ -37,34 +39,36 @@ const UserForm: React.FunctionComponent<UserFormProps> = ({ mode }) => {
     mode: 'onBlur',
   });
 
-  const onSubmit = handleSubmit(async ({ email, password }: FormData) => {
-    try {
-      setLoading(true);
+  const onSubmit = handleSubmit(
+    async ({ email, username, password }: FormData) => {
+      try {
+        setLoading(true);
 
-      switch (mode) {
-        case FormMode.SIGN_IN: {
-          await signin(email, password);
-          history.push('/');
-          break;
+        switch (mode) {
+          case FormMode.SIGN_IN: {
+            await signin(email, username, password);
+            history.push('/');
+            break;
+          }
+          case FormMode.SIGN_UP: {
+            await signup(email, username, password);
+            history.push('/');
+            break;
+          }
+          case FormMode.RECOVERY: {
+            await sendPasswordResetEmail(email);
+            setResetEmailSent(true);
+            break;
+          }
         }
-        case FormMode.SIGN_UP: {
-          await signup(email, password);
-          history.push('/');
-          break;
-        }
-        case FormMode.RECOVERY: {
-          await sendPasswordResetEmail(email);
-          setResetEmailSent(true);
-          break;
-        }
+      } catch (error) {
+        console.error(error);
+        setError((error as Error).message);
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      console.error(error);
-      setError((error as Error).message);
-    } finally {
-      setLoading(false);
-    }
-  });
+    },
+  );
 
   const onAnonClick = async () => {
     try {
@@ -90,7 +94,7 @@ const UserForm: React.FunctionComponent<UserFormProps> = ({ mode }) => {
             name="email"
             type="text"
             placeholder="Email"
-            ref={register({ required: true, maxLength: 100 })}
+            ref={register}
           />
           {errors.email && (
             <div className="mt-2 max-w-xs text-red-400">
@@ -102,12 +106,38 @@ const UserForm: React.FunctionComponent<UserFormProps> = ({ mode }) => {
             <>
               <input
                 className={`flex items-center h-12 px-4 w-full mt-2 bg-gray-200 rounded-lg border-0 ${
+                  errors.username && 'ring-2 ring-red-400'
+                }`}
+                name="username"
+                type="text"
+                placeholder="Username"
+                ref={register}
+              />
+              {errors.username && (
+                <div className="mt-2 max-w-xs text-red-400">
+                  <span>❌ {errors.username.message}</span>
+                </div>
+              )}
+            </>
+          ) : (
+            <input
+              name="password"
+              hidden
+              defaultValue="password"
+              ref={register}
+            />
+          )}
+
+          {mode !== FormMode.RECOVERY ? (
+            <>
+              <input
+                className={`flex items-center h-12 px-4 w-full mt-2 bg-gray-200 rounded-lg border-0 ${
                   errors.password && 'ring-2 ring-red-400'
                 }`}
                 name="password"
                 type="password"
                 placeholder="Password"
-                ref={register({ required: true, maxLength: 200 })}
+                ref={register}
               />
               {errors.password && (
                 <div className="mt-2 max-w-xs text-red-400">

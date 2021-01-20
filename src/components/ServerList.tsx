@@ -16,6 +16,8 @@ interface ServerListProps {
   changeServer: (s: Server) => void;
 }
 
+// TODO: need a way to sign out
+
 const ServerList: React.FunctionComponent<ServerListProps> = ({
   activeServer,
   changeServer,

@@ -4,9 +4,17 @@ import firebase from '../api';
 
 interface Auth {
   user: firebase.User | false | null;
-  signin: (email: string, password: string) => Promise<firebase.User | null>;
+  signin: (
+    email: string,
+    username: string,
+    password: string,
+  ) => Promise<firebase.User | null>;
   signinAnon: () => Promise<firebase.User | null>;
-  signup: (email: string, password: string) => Promise<firebase.User | null>;
+  signup: (
+    email: string,
+    username: string,
+    password: string,
+  ) => Promise<firebase.User | null>;
   signout: () => Promise<void>;
   sendPasswordResetEmail: (email: string) => Promise<boolean>;
 }
@@ -27,10 +35,11 @@ function useProvideAuth() {
   // false indicates they are not authenticated
   const [user, setUser] = useState<firebase.User | false | null>(null);
 
-  const signin = async (email: string, password: string) => {
+  const signin = async (email: string, username: string, password: string) => {
     const response = await firebase
       .auth()
       .signInWithEmailAndPassword(email, password);
+    await response?.user?.updateProfile({ displayName: username });
     setUser(response.user);
     return response.user;
   };
@@ -41,10 +50,11 @@ function useProvideAuth() {
     return response.user;
   };
 
-  const signup = async (email: string, password: string) => {
+  const signup = async (email: string, username: string, password: string) => {
     const response = await firebase
       .auth()
       .createUserWithEmailAndPassword(email, password);
+    await response?.user?.updateProfile({ displayName: username });
     setUser(response.user);
     return response.user;
   };

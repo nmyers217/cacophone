@@ -14,9 +14,6 @@ const ChatClient: React.FunctionComponent = () => {
     },
     [setChannel, setServer],
   );
-  const sendMessage = useCallback((message: string) => {
-    console.log(message);
-  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden text-gray-700">
@@ -28,11 +25,7 @@ const ChatClient: React.FunctionComponent = () => {
         changeChannel={setChannel}
       />
 
-      <Chat
-        activeServer={server}
-        activeChannel={channel}
-        sendMessage={sendMessage}
-      />
+      <Chat activeServer={server} activeChannel={channel} />
     </div>
   );
 };
