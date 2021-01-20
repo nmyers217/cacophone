@@ -11,9 +11,7 @@ interface State {
 
 interface Action {
   type: string;
-  payload?:
-    | firebase.firestore.CollectionReference<any>
-    | firebase.firestore.FirestoreError;
+  payload?: any;
 }
 
 const reducer: React.Reducer<State, Action> = (
@@ -42,9 +40,7 @@ const reducer: React.Reducer<State, Action> = (
   }
 };
 
-export default function useFirestoreQuery(
-  query: firebase.firestore.CollectionReference<any>,
-) {
+export default function useFirestoreQuery(query: any) {
   const initialState: State = {
     status: query ? 'loading' : 'idle',
     data: undefined,
@@ -70,14 +66,14 @@ export default function useFirestoreQuery(
     dispatch({ type: 'loading' });
 
     return queryCached.onSnapshot(
-      (response) => {
+      (response: any) => {
         const data = response.docs
           ? getCollectionData(response)
           : getDocData(response);
 
         dispatch({ type: 'success', payload: data });
       },
-      (error) => {
+      (error: any) => {
         dispatch({ type: 'error', payload: error });
       },
     );

@@ -15,6 +15,12 @@ const ChannelList: React.FunctionComponent<ChannelListProps> = ({
 }) => {
   return (
     <div className="flex flex-col flex-shrink-0 w-64 border-r border-gray-300 bg-gray-100">
+      <button className="flex-shrink-0 relative text-sm focus:outline-none group">
+        <div className="flex items-center justify-between w-full h-16 px-4 border-b border-gray-300 hover:bg-gray-300">
+          <span className="font-medium">{activeServer?.name}</span>
+        </div>
+      </button>
+
       <div className="h-0 overflow-auto flex-grow">
         <div className="mt-4">
           <div className="flex items-center h-8 px-3 group">
